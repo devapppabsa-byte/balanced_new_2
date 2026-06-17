@@ -931,14 +931,20 @@
                                                 </a>
 
                                             </div>
-                                            <div class="text-end px-2">
+                                            <div class="text-start px-2">
                                                 <span class="fw-bold text-warning">
                                                     {{ number_format($aporte_norma, 2) }}%
                                                 </span>
-                                                <small class="text-muted">Aporte: {{ ($aporte_norma  * $norma->ponderacion_norma) / 100 }} % </small>
+                                                <br>
+                                                <p class="text-muted" style="font-size: 10px">Aporte: {{ ($aporte_norma  * $norma->ponderacion_norma) / 100 }} % </p>
 
+                                                <p style="font-size: 10px">
+                                                    Ponderación: {{$norma->ponderacion_norma}} %
+                                                </p>
 
                                             </div>
+
+                                            
                                         </div>
                                     @endforeach
                                     @php 

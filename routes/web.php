@@ -78,7 +78,7 @@ Route::post('/admin_login/ingreso_perfil_admin', [adminController::class, 'ingre
 Route::get('/perfil_admin', [adminController::class, 'perfil_admin'])->name('perfil.admin')->middleware('auth:admin');
 
 
-Route::post('/perfil_admin/agregar_cliente', [adminController::class, 'agregar_cliente'])->name('agregar.cliente');
+Route::post('/perfil_admin/agregar_cliente', [adminController::class, 'agregar_cliente'])->name('agregar.cliente')->middleware('auth:admin');
 
 
 Route::delete('/perfil_admin/eliminar_cliente/{cliente}', [adminController::class, 'eliminar_cliente'])->name('eliminar.cliente')->middleware('auth:admin');
@@ -244,7 +244,7 @@ Route::get('/perfil_admin/quejas/seguimiento_quejas/{queja}',[quejasController::
 Route::post('/perfil_admin/proveedores/', [proveedorController::class, 'proveedor_store'])->name('proveedor.store')->middleware('auth:admin');
 
 
-Route::get('/perfil_admin/logs', [adminController::class, 'logs'])->name('logs.show.admin');
+Route::get('/perfil_admin/logs', [adminController::class, 'logs'])->name('logs.show.admin')->middleware('auth:admin');
 
 
 
@@ -252,34 +252,38 @@ Route::get('/perfil_admin/logs', [adminController::class, 'logs'])->name('logs.s
 
 
 //aqui van a ir las rutas para eso de las perspectivas
-Route::get('/perfil_admin/perspectivas', [perspectivaController::class, 'perspectivas_show'])->name('perspectivas.show');
-Route::post('/perfil_admin/perspectiva/store', [perspectivaController::class, 'perspectiva_store'])->name('perspectiva.store');
-Route::delete('/perfil_admin/perspectiva/delete/{perspectiva}', [perspectivaController::class, 'perspectiva_delete'])->name('eliminar.perspectiva');
-Route::patch('/perfil_admin/perspectiva/edit/{perspectiva}', [perspectivaController::class, 'edit_perspectiva'])->name('edit.perspectiva');
+Route::get('/perfil_admin/perspectivas', [perspectivaController::class, 'perspectivas_show'])->name('perspectivas.show')->middleware('auth:admin');
+
+Route::post('/perfil_admin/perspectiva/store', [perspectivaController::class, 'perspectiva_store'])->name('perspectiva.store')->middleware('auth:admin');
+
+Route::delete('/perfil_admin/perspectiva/delete/{perspectiva}', [perspectivaController::class, 'perspectiva_delete'])->name('eliminar.perspectiva')->middleware('auth:admin');
+
+Route::patch('/perfil_admin/perspectiva/edit/{perspectiva}', [perspectivaController::class, 'edit_perspectiva'])->name('edit.perspectiva')->middleware('auth:admin');
+
 Route::get('/perfil_admin/perspectiva/objetivo/{perspectiva}', [perspectivaController::class, 'detalle_perspectiva'])->name('detalle.perspectiva')->middleware('auth:admin');
 
 
-Route::post('/perfil_admin/perspectiva/objetivo/post/{perspectiva}', [perspectivaController::class, 'objetivo_store'])->name('objetivo.store');
+Route::post('/perfil_admin/perspectiva/objetivo/post/{perspectiva}', [perspectivaController::class, 'objetivo_store'])->name('objetivo.store')->middleware('auth:admin');
 
-Route::delete('/perfil_admin/perspectiva/objetivo/delete_objetivo/{objetivo}', [perspectivaController::class, 'objetivo_delete'])->name('objetivo.delete');
-
-
-Route::put('/perfil_admin/perspectiva/objetivo/delete_indicador_objetivo/{objetivo}/{indicador}', [perspectivaController::class, 'indicador_objetivo_delete'])->name('indicador.objetivo.delete');
-
-Route::put('/perfil_admin/perspectiva/objetivo/delete_encuesta_objetivo/{objetivo}/{encuesta}', [perspectivaController::class, 'encuesta_objetivo_delete'])->name('encuesta.objetivo.delete');
+Route::delete('/perfil_admin/perspectiva/objetivo/delete_objetivo/{objetivo}', [perspectivaController::class, 'objetivo_delete'])->name('objetivo.delete')->middleware('auth:admin');
 
 
-Route::put('/perfil_admin/perspectiva/objetivo/delete_norma_objetivo/{objetivo}/{norma}', [perspectivaController::class, 'norma_objetivo_delete'])->name('norma.objetivo.delete');
+Route::put('/perfil_admin/perspectiva/objetivo/delete_indicador_objetivo/{objetivo}/{indicador}', [perspectivaController::class, 'indicador_objetivo_delete'])->name('indicador.objetivo.delete')->middleware('auth:admin');
+
+Route::put('/perfil_admin/perspectiva/objetivo/delete_encuesta_objetivo/{objetivo}/{encuesta}', [perspectivaController::class, 'encuesta_objetivo_delete'])->name('encuesta.objetivo.delete')->middleware('auth:admin');
 
 
-Route::patch('/perfil_admin/perspectiva/objetivo/update/{objetivo}', [perspectivaController::class, 'objetivo_update'])->name('objetivo.update');
-Route::post('/perfil_admin/perspectiva/objetivo/agregar_indicador_a_objetivo/{objetivo}', [perspectivaController::class, 'add_indicador_objetivo'])->name('add.indicador.objetivo');
+Route::put('/perfil_admin/perspectiva/objetivo/delete_norma_objetivo/{objetivo}/{norma}', [perspectivaController::class, 'norma_objetivo_delete'])->name('norma.objetivo.delete')->middleware('auth:admin');
 
-Route::post('/perfil_admin/perspectiva/objetivo/agregar_ponderacion_indicador/{indicador}', [perspectivaController::class, 'agregar_ponderacion_indicador_objetivo'])->name('agregar.ponderacion.indicador.objetivo');
 
-Route::post('/perfil_admin/perspectiva/objetivo/agregar_ponderacion_encuesta/{encuesta}', [perspectivaController::class, 'agregar_ponderacion_encuesta_objetivo'])->name('agregar.ponderacion.encuesta.objetivo');
+Route::patch('/perfil_admin/perspectiva/objetivo/update/{objetivo}', [perspectivaController::class, 'objetivo_update'])->name('objetivo.update')->middleware('auth:admin');
+Route::post('/perfil_admin/perspectiva/objetivo/agregar_indicador_a_objetivo/{objetivo}', [perspectivaController::class, 'add_indicador_objetivo'])->name('add.indicador.objetivo')->middleware('auth:admin');
 
-Route::post('/perfil_admin/perspectiva_objetivo/agregar_ponderacion_norma/{norma}', [perspectivaController::class, 'agregar_ponderacion_norma_objetivo'])->name('agregar.ponderacion.norma.objetivo');
+Route::post('/perfil_admin/perspectiva/objetivo/agregar_ponderacion_indicador/{indicador}', [perspectivaController::class, 'agregar_ponderacion_indicador_objetivo'])->name('agregar.ponderacion.indicador.objetivo')->middleware('auth:admin');
+
+Route::post('/perfil_admin/perspectiva/objetivo/agregar_ponderacion_encuesta/{encuesta}', [perspectivaController::class, 'agregar_ponderacion_encuesta_objetivo'])->name('agregar.ponderacion.encuesta.objetivo')->middleware('auth:admin');
+
+Route::post('/perfil_admin/perspectiva_objetivo/agregar_ponderacion_norma/{norma}', [perspectivaController::class, 'agregar_ponderacion_norma_objetivo'])->name('agregar.ponderacion.norma.objetivo')->middleware('auth:admin');
 
 
 //aqui van a ir las rutas para eso de las perspectivas
@@ -322,11 +326,11 @@ Route::get('/perfil_cliente/lista_quejas', [clienteController::class, 'lista_que
 
 Route::get('/perfil_cliente/seguimientos/{queja}', [clienteController::class, 'seguimiento_quejas_cliente'])->name('seguimiento.quejas.cliente')->middleware('auth:cliente');
 
-Route::post('/perfil_cliente/seguimientos/comentando/{queja}', [clienteController::class, 'comentario_user_reclamo'])->name('comentario.user.reclamo');
+Route::post('/perfil_cliente/seguimientos/comentando/{queja}', [clienteController::class, 'comentario_user_reclamo'])->name('comentario.user.reclamo')->middleware('auth:cliente');
 
 
 
-Route::post('/perfil_cliente', [userController::class, 'cerrar_session_cliente'])->name('cerrar.session.cliente');
+Route::post('/perfil_cliente', [userController::class, 'cerrar_session_cliente'])->name('cerrar.session.cliente')->middleware('auth:cliente');
 
 
 
@@ -351,12 +355,12 @@ Route::post('perfil_usuario/encuestas_clientes_user/contestando/{encuesta}', [cl
 //escudriñando la informacion que se da en el indicador
 Route::get('perfil_admin/lista_indicadores/escudriñando_indicador/{indicador}', [indicadorController::class, 'analizar_indicador'])->name('analizar.indicador')->middleware("auth:admin");
 
-Route::get('perfil_admin/lista_indicadores/estacionalidad_indicador/{indicador}', [indicadorController::class, 'estacionalidad_show'])->name('estacionalidad.show');
+Route::get('perfil_admin/lista_indicadores/estacionalidad_indicador/{indicador}', [indicadorController::class, 'estacionalidad_show'])->name('estacionalidad.show')->middleware('auth:admin');
 
 
 
 //Rutas de el escudriño de datos pero ahora desde la vista de los usuarios
-Route::get('perfil_usuario/analizando_datos/{indicador}', [indicadorController::class, 'analizar_indicador_usuario'])->name('analizar.indicador.usuario');
+Route::get('perfil_usuario/analizando_datos/{indicador}', [indicadorController::class, 'analizar_indicador_usuario'])->name('analizar.indicador.usuario')->middleware('auth');
 
 
 
@@ -370,4 +374,4 @@ Route::get('perfil_usuario/analizando_datos/{indicador}', [indicadorController::
 
 //filtrado de indicadores general
 
-Route::get('perfil_usuario/indicadores_revision/', [indicadorController::class, 'indicadores_revision'])->name('revision.indicadores');
+Route::get('perfil_usuario/indicadores_revision/', [indicadorController::class, 'indicadores_revision'])->name('revision.indicadores')->middleware('auth');

@@ -17,7 +17,8 @@ class Norma extends Model
         'ponderacion_norma',
         'id_objetivo_perspectiva',
         'tipo_regulacion',
-        'autor'
+        'autor',
+        'planta'
     ];
 
 

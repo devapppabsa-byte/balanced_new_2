@@ -509,6 +509,42 @@ else{
                     <canvas id="graficoPie"></canvas>
                 </div>
 
+                <div class="col-12 p-1 bg-white mt-3 p-3">
+                    <h4>{{ request('campos_a_graficar') ? request('campos_a_graficar') : 'Estacionalidad Mensual (Radar)' }} |
+                        {!!  
+                            empty($indicador->planta)
+                                ? "<i class='fa-solid fa-circle-exclamation'></i> Sin asignación"
+                                : ($tipos[strtolower($indicador->planta)] 
+                                    ?? " <i class='fa-solid fa-industry'></i> Planta {$indicador->planta}")
+                        !!}
+                    </h4>
+                    <canvas id="graficoRadar"></canvas>
+                </div>
+
+                <div class="col-12 p-1 bg-white mt-3 p-3">
+                    <h4>{{ request('campos_a_graficar') ? request('campos_a_graficar') : 'Comparativa por Año (Polar)' }} |
+                        {!!  
+                            empty($indicador->planta)
+                                ? "<i class='fa-solid fa-circle-exclamation'></i> Sin asignación"
+                                : ($tipos[strtolower($indicador->planta)] 
+                                    ?? " <i class='fa-solid fa-industry'></i> Planta {$indicador->planta}")
+                        !!}
+                    </h4>
+                    <canvas id="graficoPolar"></canvas>
+                </div>
+
+                <div class="col-12 p-1 bg-white mt-3 p-3">
+                    <h4>{{ request('campos_a_graficar') ? request('campos_a_graficar') : 'Valores Ordenados' }} |
+                        {!!  
+                            empty($indicador->planta)
+                                ? "<i class='fa-solid fa-circle-exclamation'></i> Sin asignación"
+                                : ($tipos[strtolower($indicador->planta)] 
+                                    ?? " <i class='fa-solid fa-industry'></i> Planta {$indicador->planta}")
+                        !!}
+                    </h4>
+                    <canvas id="graficoHorizontal"></canvas>
+                </div>
+
             </div>
         </div>
 
@@ -2027,7 +2063,193 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+{{-- RADAR: Estacionalidad Mensual --}}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const radarData = @json($graficar);
+    if (!radarData || radarData.length === 0) return;
 
+    const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+    const totals = {};
+    const counts = {};
+    radarData.forEach(item => {
+        const fecha = new Date(item.fecha_periodo);
+        const mes = fecha.getMonth();
+        const valor = parseFloat(item.informacion_campo);
+        if (isNaN(valor)) return;
+        totals[mes] = (totals[mes] || 0) + valor;
+        counts[mes] = (counts[mes] || 0) + 1;
+    });
+
+    const promediosMensuales = meses.map((_, i) =>
+        counts[i] ? (totals[i] / counts[i]) : 0
+    );
+
+    const ctxRadar = document.getElementById("graficoRadar");
+    if (!ctxRadar) return;
+    if (window.miGraficaRadar) window.miGraficaRadar.destroy();
+
+    window.miGraficaRadar = new Chart(ctxRadar.getContext("2d"), {
+        type: "radar",
+        data: {
+            labels: meses,
+            datasets: [{
+                label: "Promedio mensual",
+                data: promediosMensuales,
+                backgroundColor: "rgba(54, 162, 235, 0.15)",
+                borderColor: "rgba(54, 162, 235, 0.9)",
+                borderWidth: 2,
+                pointBackgroundColor: "rgba(54, 162, 235, 0.9)",
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: { beginAtZero: true }
+            },
+            plugins: {
+                datalabels: { display: false }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+});
+</script>
+
+{{-- POLAR AREA: Comparativa por Año --}}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const polarData = @json($promedios);
+    if (!polarData || polarData.length === 0) return;
+
+    const ctxPolar = document.getElementById("graficoPolar");
+    if (!ctxPolar) return;
+    if (window.miGraficaPolar) window.miGraficaPolar.destroy();
+
+    const polarColors = [
+        "rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)",
+        "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)",
+        "rgba(153, 102, 255, 0.8)", "rgba(255, 159, 64, 0.8)"
+    ];
+
+    window.miGraficaPolar = new Chart(ctxPolar.getContext("2d"), {
+        type: "polarArea",
+        data: {
+            labels: polarData.map(p => "Año " + p.anio),
+            datasets: [{
+                data: polarData.map(p => parseFloat(p.promedio)),
+                backgroundColor: polarColors.slice(0, polarData.length)
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                datalabels: {
+                    formatter: function (value) {
+                        var um = "{{ $datos_campo_graficar->unidad_medida ?? $indicador->unidad_medida }}";
+                        if (um === "pesos") return "$" + Number(value).toLocaleString("es-MX", {maximumFractionDigits: 2});
+                        if (um === "porcentaje") return Number(value).toLocaleString("es-MX", {maximumFractionDigits: 2}) + " %";
+                        if (um === "dias") return Number(value).toLocaleString("es-MX", {maximumFractionDigits: 2}) + " Días";
+                        if (um === "toneladas") return Number(value).toLocaleString("es-MX", {maximumFractionDigits: 2}) + " Ton.";
+                        return Number(value).toLocaleString("es-MX", {maximumFractionDigits: 2});
+                    },
+                    color: "#000",
+                    font: { weight: "bold", size: 12 }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+});
+</script>
+
+{{-- HORIZONTAL BAR: Valores Ordenados --}}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var hData = @json($graficar);
+    if (!hData || hData.length === 0) return;
+
+    var indicadorData = @json($indicador);
+    var tipo = indicadorData.tipo_indicador;
+    var metaMin = indicadorData.meta_minima;
+    var variacionOn = indicadorData.variacion === "on";
+    var limiteInf = indicadorData.meta_esperada - indicadorData.meta_minima;
+    var limiteSup = indicadorData.meta_esperada + indicadorData.meta_minima;
+    var umCampo = "{{ $datos_campo_graficar->unidad_medida ?? '' }}";
+    var umIndicador = "{{ $indicador->unidad_medida }}";
+
+    var sorted = hData.slice().sort(function (a, b) {
+        return parseFloat(b.informacion_campo) - parseFloat(a.informacion_campo);
+    });
+
+    var hLabels = sorted.map(function (item) {
+        var f = new Date(item.fecha_periodo);
+        var mesesArr = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+        return mesesArr[f.getMonth()] + " " + f.getFullYear();
+    });
+
+    var hValues = sorted.map(function (item) { return parseFloat(item.informacion_campo); });
+    var modoDinamico = !hData.some(function (d) { return d.final === "on"; });
+
+    function hColor(valor) {
+        if (valor === null || isNaN(valor)) return "rgba(200,200,200,0.3)";
+        if (modoDinamico) return "rgba(84, 180, 211, 0.85)";
+        if (variacionOn) {
+            if (valor < limiteInf || valor > limiteSup) return "rgba(255,99,132,0.85)";
+            return "rgba(75,192,75,0.85)";
+        }
+        if (tipo === "riesgo") {
+            return valor < metaMin ? "rgba(75,192,75,0.85)" : "rgba(255,99,132,0.85)";
+        }
+        return valor < metaMin ? "rgba(255,99,132,0.85)" : "rgba(75,192,75,0.85)";
+    }
+
+    function hFormat(valor) {
+        var um = umCampo || umIndicador;
+        if (um === "pesos") return "$" + Number(valor).toLocaleString("es-MX", {maximumFractionDigits: 2});
+        if (um === "porcentaje") return Number(valor).toLocaleString("es-MX", {maximumFractionDigits: 2}) + " %";
+        if (um === "dias") return Number(valor).toLocaleString("es-MX", {maximumFractionDigits: 2}) + " Días";
+        if (um === "toneladas") return Number(valor).toLocaleString("es-MX", {maximumFractionDigits: 2}) + " Ton.";
+        return Number(valor).toLocaleString("es-MX", {maximumFractionDigits: 2});
+    }
+
+    var ctxH = document.getElementById("graficoHorizontal");
+    if (!ctxH) return;
+    if (window.miGraficaHorizontal) window.miGraficaHorizontal.destroy();
+
+    window.miGraficaHorizontal = new Chart(ctxH.getContext("2d"), {
+        type: "bar",
+        data: {
+            labels: hLabels,
+            datasets: [{
+                data: hValues,
+                backgroundColor: hValues.map(function (v) { return hColor(v); }),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: "end",
+                    align: "end",
+                    formatter: function (value) { return hFormat(value); },
+                    color: "#000",
+                    font: { weight: "bold", size: 11 }
+                }
+            },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+});
+</script>
 
 {{-- Aqui yacen os scripts de la estacionalidad --}}
 

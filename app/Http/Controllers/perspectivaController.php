@@ -14,6 +14,7 @@ use App\Services\CumplimientoService;
 class perspectivaController extends Controller
 {
 
+
     public function perspectivas_show(){
 
 
@@ -30,7 +31,7 @@ class perspectivaController extends Controller
                 ->endOfDay()
                 ->utc()
 
-            : Carbon::now(config('app.timezone'))
+             : Carbon::now(config('app.timezone'))
                 ->endOfYear()
                 ->utc();
 
@@ -55,13 +56,6 @@ class perspectivaController extends Controller
                 2
             );
         }
-
-
-
-
-
-
-
 
 
         return view('admin.agregar_perspectivas', compact('perspectivas', 'inicio', 'fin'));

@@ -290,7 +290,7 @@
                                                                     Meta: {{ $indicador->meta_esperada }}
                                                                 </span>
                                         
-                                                                @php
+                                                                {{-- @php
 
                                                                     $informacion_indicadores = IndicadorLleno::where('id_indicador', $indicador->id)->where('final', 'on')->whereBetween('fecha_periodo', [$inicio, $fin])->get();
                                                                     $array_datos = [];
@@ -300,13 +300,102 @@
                                                                         array_push($array_datos, $informacion_indicador->informacion_campo);
                                                                     
                                                                     }
+                                                                @endphp --}}
+
+
+                                                                @php
+
+                                                                    $array_datos = [];
+
+                                                                    /*
+                                                                        Si el indicador es anual, se toma únicamente el último registro
+                                                                        del año como cumplimiento de todo el año.
+                                                                    */
+                                                                    if ($indicador->perioricidad_perspectivas == 'anual') {
+
+                                                                        
+
+                                                                        $anio = \Carbon\Carbon::parse($fin)->year;
+
+                                                                        $informacion_indicador = IndicadorLleno::where('id_indicador', $indicador->id)
+                                                                            ->where('final', 'on')
+                                                                            ->whereYear('fecha_periodo', $anio)
+                                                                            ->orderBy('fecha_periodo', 'desc')
+                                                                            ->first();
+
+                                                                        if (!is_null($informacion_indicador)) {
+                                                                            array_push($array_datos, $informacion_indicador->informacion_campo);
+                                                                        }
+
+                                                                    } else {
+
+                                                                        $informacion_indicadores = IndicadorLleno::where('id_indicador', $indicador->id)
+                                                                            ->where('final', 'on')
+                                                                            ->whereBetween('fecha_periodo', [$inicio, $fin])
+                                                                            ->get();
+
+                                                                        foreach ($informacion_indicadores as $informacion_indicador) {
+                                                                            array_push($array_datos, $informacion_indicador->informacion_campo);
+                                                                        }
+
+                                                                    }
+
                                                                 @endphp
-                                                            <span>
 
 
+                                                                <span>
+                                                                    <i class="fa-solid fa-gauge"></i>
+                                                                    Promedio Cumplimiento: 
+
+                                                                    @if (!empty($array_datos))
+                                                                        <span class="fw-bold">
+                                                                            @php
+                                                                                $promedio_cumplimiento = 0;    
+                                                                            @endphp
+                                                                            
+                                                                            @if ($indicador->tipo_indicador == "normal")
+
+                                                                                @if ($indicador->unidad_medida == "porcentaje")
+                                                                                    @php
+                                                                                        $promedio_cumplimiento = array_sum($array_datos) / count($array_datos);
+                                                                                    @endphp
+                                                                                @else
+                                                                                    @php
+                                                                                        $promedio_cumplimiento = array_sum($array_datos) / (count($array_datos) / $indicador->meta_esperada) * 100;
+                                                                                    @endphp
+                                                                                @endif
+
+                                                                            @else
+
+                                                                                @if($indicador->unidad_medida == "porcentaje")
+                                                                                    @php
+                                                                                        $promedio_cumplimiento = array_sum($array_datos) / count($array_datos);
+                                                                                    @endphp
+                                                                                @else
+                                                                                    @php
+                                                                                        $promedio_cumplimiento = $indicador->meta_esperada / (array_sum($array_datos) / count($array_datos)) * 100;
+                                                                                    @endphp
+                                                                                @endif
+
+                                                                            @endif
+
+                                                                            @if ($indicador->indicador_riesgo_porcentaje == "riesgo_porcentaje")
+                                                                                @php
+                                                                                    $promedio_cumplimiento = 100 - $promedio_cumplimiento;
+                                                                                @endphp
+                                                                            @endif
+
+                                                                            {{ round($promedio_cumplimiento, 2) }} %
+                                                                        </span>
+                                                                    @else
+
+                                                                        <span class="fw-bold">0</span>
+                                                                    
+                                                                    @endif
+                                                                </span> 
 
 
-
+                                                            {{-- <span>
                                                                 <i class="fa-solid fa-gauge"></i>
                                                                 Promedio Cumplimiento: 
                                                                 
@@ -343,7 +432,11 @@
                                                                     <span class="fw-bold">0</span>
                                                                 
                                                                 @endif
-                                                            </span>
+                                                            </span>  --}}
+
+
+
+
 
                                                             <span>
                                                                 <i class="fa-solid fa-right-left"></i>

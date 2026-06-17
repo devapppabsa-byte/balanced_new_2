@@ -752,47 +752,115 @@
                             </div>
 
                             <div class="card-body">
-                                <!-- Sección Indicadores -->
-                                <div class="mb-4">
-                                    <h6 class="text-uppercase fw-bold text-muted small mb-3 letter-spacing-1">
-                                        <i class="fas fa-chart-line text-primary me-2"></i>Indicadores
-                                    </h6>
-                                    
-                                    @php $suma_cumplimientos_indicadores = 0; @endphp
-                                    @foreach ($objetivo->indicadores_perspectiva as $indicador)
-                                        @php
-                                            // LOGICA MANTENIDA IGUAL
-                                            $indicador_lleno = IndicadorLleno::where('final', 'on')->where('id_indicador', $indicador->id)->whereBetween('fecha_periodo', [$inicio, $fin])->pluck('informacion_campo')->toArray();
-                                            $count = count($indicador_lleno);
-                                            $promedio_cumplimiento = 0;
-                                            if ($count > 0) {
-                                                $suma_datos = array_sum($indicador_lleno);
-                                                $promedio_simple = $suma_datos / $count;
-                                                $promedio_cumplimiento = ($indicador->tipo_indicador == "normal") 
-                                                    ? (($indicador->unidad_medida == "porcentaje") ? $promedio_simple : ($promedio_simple / $indicador->meta_esperada) * 100)
-                                                    : (($indicador->unidad_medida == 'porcentaje') ? $promedio_simple : ($indicador->meta_esperada / $promedio_simple) * 100);
-                                            }
-                                            $aportacion_kpi = ($promedio_cumplimiento * $indicador->ponderacion_indicador) / 100;
-                                            $suma_cumplimientos_indicadores += $aportacion_kpi;
-                                        @endphp
 
-                                        <div class="d-flex align-items-center mb-3 p-2 border-start border-primary border-4 bg-light rounded-end shadow-sm hover-shadow-sm transition-all">
-                                            <div class="flex-grow-1 ms-2">
-                                                <a href="{{ route('analizar.indicador', $indicador->id) }}" target="_blank" class="fw-bold text-dark text-decoration-none small d-block">
-                                                    {{ $indicador->nombre }}
-                                                </a>
-                                                <small class="text-muted">Pond: {{ $indicador->ponderacion_indicador }}%</small>
-                                            </div>
-                                            <div class="text-end px-2">
-                                                <span class="d-block fw-bold text-primary">{{ number_format($promedio_cumplimiento, 1) }}%</span>
-                                                <small class="text-muted" style="font-size: 9px;">APORTE: {{ number_format($aportacion_kpi, 2) }}%</small>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                    
-                                    @php $total_cumplimiento_objetivo += $suma_cumplimientos_indicadores; @endphp
-                                    @php $total_cumplimiento_perspectiva += ($suma_cumplimientos_indicadores * $objetivo->ponderacion) / 100; @endphp
-                                </div>
+
+                                <!-- Sección Indicadores -->
+<div class="mb-4">
+    <h6 class="text-uppercase fw-bold text-muted small mb-3 letter-spacing-1">
+        <i class="fas fa-chart-line text-primary me-2"></i>Indicadores
+    </h6>
+    
+    @php $suma_cumplimientos_indicadores = 0; @endphp
+
+    @foreach ($objetivo->indicadores_perspectiva as $indicador)
+
+        @php
+            // LOGICA MANTENIDA, AGREGANDO CONDICIONES ANUAL Y RIESGO PORCENTAJE
+
+            $indicador_lleno = [];
+
+            /*
+                Si el indicador tiene periodicidad anual,
+                se toma únicamente el último registro del año
+                como cumplimiento de todo el año.
+            */
+            if ($indicador->perioricidad_perspectivas == 'anual') {
+
+                $anio = \Carbon\Carbon::parse($fin)->year;
+
+                $ultimo_registro_anual = IndicadorLleno::where('final', 'on')
+                    ->where('id_indicador', $indicador->id)
+                    ->whereYear('fecha_periodo', $anio)
+                    ->orderBy('fecha_periodo', 'desc')
+                    ->first();
+
+                if (!is_null($ultimo_registro_anual)) {
+                    $indicador_lleno[] = $ultimo_registro_anual->informacion_campo;
+                }
+
+            } else {
+
+                $indicador_lleno = IndicadorLleno::where('final', 'on')
+                    ->where('id_indicador', $indicador->id)
+                    ->whereBetween('fecha_periodo', [$inicio, $fin])
+                    ->pluck('informacion_campo')
+                    ->toArray();
+
+            }
+
+            $count = count($indicador_lleno);
+            $promedio_cumplimiento = 0;
+
+            if ($count > 0) {
+
+                $suma_datos = array_sum($indicador_lleno);
+                $promedio_simple = $suma_datos / $count;
+
+                if ($indicador->tipo_indicador == "normal") {
+
+                    if ($indicador->unidad_medida == "porcentaje") {
+                        $promedio_cumplimiento = $promedio_simple;
+                    } else {
+                        $promedio_cumplimiento = ($promedio_simple / $indicador->meta_esperada) * 100;
+                    }
+
+                } else {
+
+                    if ($indicador->unidad_medida == 'porcentaje') {
+                        $promedio_cumplimiento = $promedio_simple;
+                    } else {
+                        $promedio_cumplimiento = ($indicador->meta_esperada / $promedio_simple) * 100;
+                    }
+
+                }
+
+                /*
+                    Si el indicador es de riesgo porcentaje,
+                    se toma 100 y se le resta el cumplimiento calculado.
+                */
+                if ($indicador->indicador_riesgo_porcentaje == 'riesgo_porcentaje') {
+                    $promedio_cumplimiento = 100 - $promedio_cumplimiento;
+                }
+            }
+
+            $aportacion_kpi = ($promedio_cumplimiento * $indicador->ponderacion_indicador) / 100;
+
+            $suma_cumplimientos_indicadores += $aportacion_kpi;
+        @endphp
+
+        <div class="d-flex align-items-center mb-3 p-2 border-start border-primary border-4 bg-light rounded-end shadow-sm hover-shadow-sm transition-all">
+            <div class="flex-grow-1 ms-2">
+                <a href="{{ route('analizar.indicador', $indicador->id) }}" target="_blank" class="fw-bold text-dark text-decoration-none small d-block">
+                    {{ $indicador->nombre }}
+                </a>
+                <small class="text-muted">Pond: {{ $indicador->ponderacion_indicador }}%</small>
+            </div>
+            <div class="text-end px-2">
+                <span class="d-block fw-bold text-primary">
+                    {{ number_format($promedio_cumplimiento, 1) }}%
+                </span>
+                <small class="text-muted" style="font-size: 9px;">
+                    APORTE: {{ number_format($aportacion_kpi, 2) }}%
+                </small>
+            </div>
+        </div>
+    @endforeach
+    
+    @php $total_cumplimiento_objetivo += $suma_cumplimientos_indicadores; @endphp
+    @php $total_cumplimiento_perspectiva += ($suma_cumplimientos_indicadores * $objetivo->ponderacion) / 100; @endphp
+</div>
+
+
 
                                 <!-- Sección Encuestas -->
                                 <div class="mb-4">

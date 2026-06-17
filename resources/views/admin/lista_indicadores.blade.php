@@ -872,7 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tipo === 'encuesta') encuestas.push(item);
     });
 
-    function truncarTexto(texto, limite = 22) {
+    function truncarTexto(texto, limite = 60) {
         if (!texto) return '';
         return texto.length > limite ? texto.substring(0, limite) + '...' : texto;
     }

@@ -977,6 +977,7 @@
                             </div>
 
                             <div class="col-12 col-sm-12 col-md-4 col-lg-4 mt-2">
+                                
                                 <label for="unidad_medida{{$indicador->id}}" class="form-label fw-semibold">
                                     Unidad de Medida
                                     <span class="text-danger">*</span>
@@ -1030,7 +1031,7 @@
 
                             <div class="col-12 col-sm-12 col-md-4 col-lg-4 d-flex align-items-center">
                                 <div class="form-check form-switch mt-4 pt-4">
-                                <input class="form-check-input" name="perioricidad_edit" type="checkbox" role="switch" id="flexSwitchCheckAnual" {{ $indicador->perioricidad_perspectivas === "anual" ? 'checked' : '' }} />
+                                <input class="form-check-input" value="anual" name="perioricidad_edit" type="checkbox" role="switch" id="flexSwitchCheckAnual" {{ $indicador->perioricidad_perspectivas === "anual" ? 'checked' : '' }} />
                                 <label class="form-check-label" for="flexSwitchCheckAnual">Anual </label>
                                 </div>                                
                             </div>
@@ -1038,7 +1039,7 @@
                             
                             <div class="col-12 col-sm-12 col-md-4 col-lg-4 d-flex align-items-center">
                                 <div class="form-check form-switch mt-4 pt-4">
-                                <input class="form-check-input" name="riesgo_porcentaje_edit" type="checkbox" role="switch" id="flexSwitchCheckRiesgo" {{ $indicador->indicador_riesgo_porcentaje === "riesgo_porcentaje" ? 'checked' : '' }} />
+                                <input class="form-check-input" value="riesgo_porcentaje" name="riesgo_porcentaje_edit" type="checkbox" role="switch" id="flexSwitchCheckRiesgo" {{ $indicador->indicador_riesgo_porcentaje === "riesgo_porcentaje" ? 'checked' : '' }} />
                                 <label class="form-check-label" for="flexSwitchCheckRiesgo">Riesgo </label>
                                 </div>                                
                             </div>

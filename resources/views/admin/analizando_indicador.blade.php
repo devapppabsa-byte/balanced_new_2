@@ -155,7 +155,7 @@
 @php
 $semaforo = "";
 
-$valor = $ultimo_mes->informacion_campo;
+$valor = $ultimo_mes->informacion_campo ?? 0;
 $meta  = $indicador->meta_esperada;
 $var   = $indicador->meta_minima; // tu variación
 
@@ -371,25 +371,35 @@ else{
                 <div class="card bg-info">
                     <div class="card-body py-1">
                         <h4 class="text-center fw-bold text-white">
-                            {{ $ultimo_mes->nombre_campo }}
+                            {{ $ultimo_mes->nombre_campo ?? 'Campo no disponible' }}
                         </h4>
 
                         <h1 class="text-center fw-bold text-white format-number">
-                            @if($ultimo_mes->unidad_medida === 'pesos')
-                                ${{ number_format($ultimo_mes->informacion_campo, 2) }}
-                            @elseif($ultimo_mes->unidad_medida === 'porcentaje')
-                                {{ round($ultimo_mes->informacion_campo, 2) }}%
-                            @elseif($ultimo_mes->unidad_medida === 'dias')
-                                {{ round($ultimo_mes->informacion_campo, 2) }} Días
-                            @elseif($ultimo_mes->unidad_medida === 'toneladas')
-                                {{ round($ultimo_mes->informacion_campo, 2) }} Ton.
+
+                            @if (!isset($ultimo_mes->unidad_medida) )
+                                
                             @else
-                                {{ round($ultimo_mes->informacion_campo, 2) }}
+                            
+                                @if($ultimo_mes->unidad_medida === 'pesos')
+                                    ${{ number_format($ultimo_mes->informacion_campo, 2) }}
+                                @elseif($ultimo_mes->unidad_medida === 'porcentaje')
+                                    {{ round($ultimo_mes->informacion_campo, 2) }}%
+                                @elseif($ultimo_mes->unidad_medida === 'dias')
+                                    {{ round($ultimo_mes->informacion_campo, 2) }} Días
+                                @elseif($ultimo_mes->unidad_medida === 'toneladas')
+                                    {{ round($ultimo_mes->informacion_campo, 2) }} Ton.
+                                @else
+                                    {{ round($ultimo_mes->informacion_campo, 2) }}
+                                @endif
+
                             @endif
+                    
                         </h1>
 
                         <h5 class="text-center fw-bold text-white text-capitalize">
-                            {{ Carbon::parse($ultimo_mes->fecha_periodo)->translatedFormat('F Y') }}
+                            @if (isset($ultimo_mes->fecha_periodo))
+                                {{ Carbon::parse($ultimo_mes->fecha_periodo)->translatedFormat('F Y') }}
+                            @endif
                         </h5>
                     </div>
                 </div>
@@ -416,8 +426,7 @@ else{
 
 <div class="container-fluid">
 
-    @if (isset($resultado['tendencia']))
-   
+
 
             {{-- @if($resultado['mensaje'])
                 <div class="row justify-content-center border me-1">
@@ -1116,8 +1125,8 @@ else{
                         </div>
 
                         <div class="mt-2">
-                            <span class="badge bg-info me-1">{{ $resultado['tendencia'] }}</span>
-                            <span class="badge bg-dark">{{ $resultado['fuerza_tendencia'] }}</span>
+                            {{-- <span class="badge bg-info me-1">{{ $resultado['tendencia'] }}</span>
+                            <span class="badge bg-dark">{{ $resultado['fuerza_tendencia'] }}</span> --}}
                         </div>
 
                         <small class="text-muted d-block mt-2">
@@ -1138,12 +1147,12 @@ else{
                             </button>
                         </div>
 
-                        <div class="mt-2 fw-bold">
+                        {{-- <div class="mt-2 fw-bold">
                             {{ number_format($resultado['cambio'], 2) }}
                             <span class="text-muted">
                                 ({{ number_format($resultado['cambio_porcentual'], 2) }}%)
                             </span>
-                        </div>
+                        </div> --}}
 
                         <small class="text-muted d-block mt-2">
                             Diferencia entre el valor inicial y el actual en el periodo analizado.
@@ -1163,11 +1172,11 @@ else{
                             </button>
                         </div>
 
-                        <div class="mt-2">
+                        {{-- <div class="mt-2">
                             <span class="badge {{ $resultado['cumplimiento'] == 'en meta' ? 'bg-success' : 'bg-danger' }}">
                                 {{ $resultado['cumplimiento'] }}
                             </span>
-                        </div>
+                        </div> --}}
 
                         <small class="text-muted d-block mt-2">
                             Evalúa si el valor más reciente cumple con la meta establecida.
@@ -1187,12 +1196,12 @@ else{
                             </button>
                         </div>
 
-                        <div class="mt-2">
+                        {{-- <div class="mt-2">
                             <span class="badge bg-secondary">{{ $resultado['estado_historico'] }}</span>
                             <span class="text-muted ms-1">
                                 ({{ number_format($resultado['porcentaje_cumplimiento'], 0) }}%)
                             </span>
-                        </div>
+                        </div> --}}
 
                         <small class="text-muted d-block mt-2">
                             Muestra qué tan frecuentemente el indicador ha cumplido la meta en el tiempo.
@@ -1234,7 +1243,7 @@ else{
                                 <i class="fa fa-circle-info"></i>
                             </button>
                         </div>
-
+{{-- 
                         <div class="mt-2 fw-bold">
                             @if($indicador->unidad_medida === 'pesos')
                                 ${{ number_format($resultado['proyeccion_siguiente'], 2) }}
@@ -1252,7 +1261,7 @@ else{
                                 {{ number_format($resultado['proyeccion_siguiente'], 2) }}
                             @endif
 
-                        </div>
+                        </div> --}}
 
                         <small class="text-muted d-block mt-2">
                             Estimación del próximo valor basada en la tendencia actual del indicador.
@@ -1265,18 +1274,7 @@ else{
 
         </div>
 
-        @else
 
-        <div class="row justify-content-center">
-            <div class="col-10 bg-white p-4 mt-4">
-                <h1 class="text-center my-4">
-                    <i class="fa fa-exclamation-circle text-danger"></i>
-                    No hay suficientes datos para analizar
-                </h1>
-            </div>
-        </div>
-
-        @endif
 
     </div>
 </div>

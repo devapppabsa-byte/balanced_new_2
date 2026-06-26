@@ -3083,7 +3083,6 @@ public function analizar_indicador(Request $request, Indicador $indicador){
 
     if(!$datos_campo_graficar){
         $datos_campo_graficar = IndicadorLleno::where('id_indicador', $indicador->id)->where('final', 'on')->first();
-
     }
 
 
@@ -3093,14 +3092,14 @@ public function analizar_indicador(Request $request, Indicador $indicador){
 
 
     // De aqui se obtienen los datos del analisis de datos
-    $resultado = $this->calcularTendenciaKPI( $indicador->id, $indicador->meta_esperada, $indicador->tipo_indicador, $inicio, $fin); // o 'mayor_mejor'
+  $resultado = $this->calcularTendenciaKPI( $indicador->id, $indicador->meta_esperada, $indicador->tipo_indicador, $inicio, $fin); // o 'mayor_mejor'
 
 
     
 
 
 
-$graficar = IndicadorLleno::where('id_indicador', $indicador->id)
+ $graficar = IndicadorLleno::where('id_indicador', $indicador->id)
     ->whereBetween('fecha_periodo', [$inicio, $fin])
     ->where(function ($q) use ($campo_graficar, $campo_final, $campos_referencia) {
 
@@ -3433,7 +3432,7 @@ else{
 
 
 
-function calcularTendenciaKPI( $indicadorId, $meta, $tipo = 'normal', $inicio, $fin)
+function calcularTendenciaKPI( $indicadorId, $meta, $inicio, $fin, $tipo = 'normal')
 {
     // =========================
     // 1. OBTENER DATOS

@@ -226,13 +226,13 @@
                         </table>
                     </div>
 
-                    <div class="col-12 text-center py-3 bg-danger">
+                    {{-- <div class="col-12 text-center py-3 bg-danger">
                         <div class="row justify-content-center">
                             <div class="col-5 text-center">
                                 <input type="month" name="fecha" form="form_cumplimiento_normativo" class="form-control form-control-lg">
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="col-12  text-center my-3">
                         <button type="submit" class="btn p-3 btn-primary w-50" form="form_cumplimiento_normativo">

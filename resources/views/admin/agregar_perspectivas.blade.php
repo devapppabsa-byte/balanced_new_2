@@ -843,6 +843,25 @@
                 <a href="{{ route('analizar.indicador', $indicador->id) }}" target="_blank" class="fw-bold text-dark text-decoration-none small d-block">
                     {{ $indicador->nombre }}
                 </a>
+
+                <div class="col-auto ">
+                    @php
+                    $tipos = [
+                        "g" => "<i class='fa-solid fa-city'></i> Indicador General",
+                        "p" => "<i class='fa-solid fa-cow'></i> Pecuarios",
+                        "m" => "<i class='fa-solid fa-dog'></i> Mascotas",
+                    ];
+                    @endphp
+
+                    {!!  
+                        empty($indicador->planta)
+                            ? "<i class='fa-solid fa-circle-exclamation'></i> Sin asignación"
+                            : ($tipos[strtolower($indicador->planta)] 
+                                ?? " <i class='fa-solid fa-industry'></i> Planta {$indicador->planta}")
+                    !!}
+                </div>
+
+
                 <small class="text-muted">Pond: {{ $indicador->ponderacion_indicador }}%</small>
             </div>
             <div class="text-end px-2">
@@ -883,13 +902,18 @@
                                             $aporte_encuesta = ($informacion_encuestas * $encuesta->ponderacion_encuesta) / 100;
                                             $suma_cumplimientos_encuestas += $aporte_encuesta;
                                         @endphp
+
                                         <div class="d-flex align-items-center mb-2 p-2 border-start border-success border-4 bg-light rounded-end shadow-sm">
+
                                             <div class="flex-grow-1 ms-2">
                                                 <a href="{{route('encuesta.index', $encuesta->id)}}" target="_blank" class="fw-bold text-dark text-decoration-none small d-block">{{ $encuesta->nombre }}</a>
                                             </div>
+
                                             <div class="text-end px-2">
                                                 <span class="fw-bold text-success">{{ number_format($aporte_encuesta, 2) }}%</span>
+                                                <p class="fw-bold text-muted" style="font-size: 10px">Ponderación: {{$encuesta->ponderacion_encuesta}} %</p>
                                             </div>
+
                                         </div>
                                     @endforeach
                                     @php 
@@ -927,11 +951,15 @@
                                             <div class="flex-grow-1 ms-2">
                                                 
                                                 <a href="{{route('apartado.norma', $norma->id)}}" target="_blank" class="fw-bold text-dark text-decoration-none small d-block">
-                                                    {{ $norma->nombre }}
+                                                    {{ $norma->nombre }} 
                                                 </a>
+                                                <div class="badge badge-dark">
+                                                    {{$norma->planta}}
+                                                </div> 
 
                                             </div>
                                             <div class="text-start px-2">
+
                                                 <span class="fw-bold text-warning">
                                                     {{ number_format($aporte_norma, 2) }}%
                                                 </span>
@@ -941,6 +969,7 @@
                                                 <p style="font-size: 10px">
                                                     Ponderación: {{$norma->ponderacion_norma}} %
                                                 </p>
+
 
                                             </div>
 

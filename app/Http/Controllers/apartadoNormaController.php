@@ -198,8 +198,8 @@ public function registro_actividad_cumplimiento_norma(Request $request){
     Carbon::setLocale('es'); // Establece el idioma a español
     setlocale(LC_TIME, 'es_ES.UTF-8'); // Asegura que PHP use el locale correcto (depende del servidor)
     
-    $mes = Carbon::now()->translatedFormat('F Y');
-    $mes = Carbon::parse($request->fecha)->translatedFormat('m-y');
+    //$mes = Carbon::parse($request->fecha)->translatedFormat('m-y');
+    $mes = Carbon::now()->translatedFormat('F Y')->subMounth();
 
     //esta es la lista de a´partados, apartir de esta lista se creara el ciclo.    
     $lista_apartados = array_keys($request->realizada);

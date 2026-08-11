@@ -183,7 +183,7 @@
 
 
 
-@if ($carga_excel !== $ahora  || $carga_indicador === $ahora)
+{{-- @if ($carga_excel !== $ahora  || $carga_indicador === $ahora)
 
     @if ($carga_indicador === $ahora)
 
@@ -210,7 +210,7 @@
         Llenar indicador del mes
     </button>
 
-@endif
+@endif --}}
 
 
 
@@ -410,7 +410,12 @@
         </div>
 
         @empty
-            
+            <div class="col-12 text-center py-4">
+                <h5 class="text-muted">
+                    <i class="fa fa-info-circle"></i>
+                    No hay datos para mostrar
+                </h5>
+            </div>
         @endforelse
       </div>
       <div class="modal-footer bg-primary text-white">
@@ -594,7 +599,17 @@
                         !!}
                         
                     </h4>
+
+                    @if($graficar->isNotEmpty())
                     <canvas id="grafico"></canvas>
+                    @else
+                    <div class="text-center py-5">
+                        <h5 class="text-muted">
+                            <i class="fa fa-info-circle"></i>
+                            No hay datos para mostrar
+                        </h5>
+                    </div>
+                    @endif
 
                 </div>
 
@@ -609,7 +624,17 @@
                         !!}
                         
                     </h4>
+
+                    @if($graficar->isNotEmpty())
                     <canvas id="graficoLine"></canvas>
+                    @else
+                    <div class="text-center py-5">
+                        <h5 class="text-muted">
+                            <i class="fa fa-info-circle"></i>
+                            No hay datos para mostrar
+                        </h5>
+                    </div>
+                    @endif
                 </div>
 
                 <div class="col-12 p-1 bg-white mt-3 p-3">
@@ -624,7 +649,17 @@
                         !!}
                         
                     </h4>
+
+                    @if($graficar->isNotEmpty())
                     <canvas id="graficoPie"></canvas>
+                    @else
+                    <div class="text-center py-5">
+                        <h5 class="text-muted">
+                            <i class="fa fa-info-circle"></i>
+                            No hay datos para mostrar
+                        </h5>
+                    </div>
+                    @endif
                 </div>
 
             </div>
@@ -729,6 +764,7 @@
                             </h5>
                         </div>
 
+                        @if($mejor_mes)
                         <div class="col-12 col-sm-12 col-md-6 col-lg-6">
                             <div class="card bg-success">
                                 <div class="card-body text-center text-white">
@@ -780,7 +816,9 @@
                 
                             </div>
                         </div>
+                        @endif
 
+                        @if($peor_mes)
                         <div class="col-12 col-sm-12 col-md-6 col-lg-6">
                             <div class="card bg-danger">
                                 <div class="card-body text-center text-white">
@@ -831,6 +869,16 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
+
+                        @if(!$mejor_mes && !$peor_mes)
+                        <div class="col-12 text-center py-4">
+                            <h5 class="text-muted">
+                                <i class="fa fa-info-circle"></i>
+                                No hay datos para mostrar
+                            </h5>
+                        </div>
+                        @endif
 
                     </div>
                 </div>
@@ -904,7 +952,12 @@
                     </div>
                     
                     @empty
-                    
+                        <div class="col-12 text-center py-4">
+                            <h5 class="text-muted">
+                                <i class="fa fa-info-circle"></i>
+                                No hay datos para mostrar
+                            </h5>
+                        </div>
                     @endforelse
                     </div>
                 </div>
@@ -924,7 +977,7 @@
                         </div>
                             <div class="col-12">
                                 <div class="row">
-                                    @foreach($historico as $item)
+                                    @forelse($historico as $item)
                                         @php
                                             $valor = round($item['valor'], 2);
                                             $prev = $item['valor_anterior'];
@@ -1147,7 +1200,14 @@
                                             
                                         @endif
 
-                                    @endforeach
+                                    @empty
+                                        <div class="col-12 text-center py-4">
+                                            <h5 class="text-muted">
+                                                <i class="fa fa-info-circle"></i>
+                                                No hay datos para mostrar
+                                            </h5>
+                                        </div>
+                                    @endforelse
                                 </div>      
                             </div>                    
                         </div>

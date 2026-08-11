@@ -110,6 +110,7 @@
                                     id="buscador"
                                     class="form-control"
                                     placeholder="Buscar ..."
+                                    autofocus
                                 >           
                         </div>
                     </div>

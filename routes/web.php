@@ -146,6 +146,8 @@ Route::post('/perfil_admin/informaion_foranea/agregar_campo_precargado', [campoP
 
 Route::post('/perfil_admin/informacion_foranea/cargando_excel', [CamposForaneosImportController::class, 'importar'])->name('importar_excel')->middleware('auth:admin');
 
+Route::get('/perfil_admin/informacion_foranea/descargar_ultimo_excel', [CamposForaneosImportController::class, 'descargar_ultimo_excel'])->name('descargar.ultimo.excel')->middleware('auth:admin');
+
 //PRUEBAS CON EL ARCHIVO DE EXCEL
 
 //Eliminando campos la ctm

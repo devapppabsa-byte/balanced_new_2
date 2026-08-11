@@ -461,7 +461,7 @@ else{
     <div class="row justify-content-center px-2">
 
 
-        <div class="col-12 col-sm-12 col-md-12 col-lg-8">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-7">
             <div class="row">
 
                 <div class="col-12 p-1 bg-white mt-3 p-3">
@@ -558,7 +558,7 @@ else{
         </div>
 
 
-        <div class="col-12 col-sm-12 col-md-9 col-lg-4 ">
+        <div class="col-12 col-sm-12 col-md-9 col-lg-5 ">
 
 
             <div class="row justify-content-center border ms-1">
@@ -1110,170 +1110,6 @@ else{
 
 
 
-        <div class="col-12 ">
-            <div class="row justify-content-center border ms-1">
-
-                {{-- TENDENCIA --}}
-                <div class="col-12 bg-white mt-3 p-3">
-                    <div class="p-2 border rounded h-100">
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>Tendencia</strong>
-                            <button class="btn btn-sm btn-light p-1" data-bs-toggle="modal" data-bs-target="#modalTendencia">
-                                <i class="fa fa-circle-info"></i>
-                            </button>
-                        </div>
-
-                        <div class="mt-2">
-                            {{-- <span class="badge bg-info me-1">{{ $resultado['tendencia'] }}</span>
-                            <span class="badge bg-dark">{{ $resultado['fuerza_tendencia'] }}</span> --}}
-                        </div>
-
-                        <small class="text-muted d-block mt-2">
-                            Indica la dirección del indicador y qué tan confiable es la tendencia según su comportamiento.
-                        </small>
-
-                    </div>
-                </div>
-
-                {{-- CAMBIO --}}
-                <div class="col-12 bg-white p-3">
-                    <div class="p-2 border rounded h-100">
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>Cambio</strong>
-                            <button class="btn btn-sm btn-light p-1" data-bs-toggle="modal" data-bs-target="#modalCambio">
-                                <i class="fa fa-circle-info"></i>
-                            </button>
-                        </div>
-
-                        {{-- <div class="mt-2 fw-bold">
-                            {{ number_format($resultado['cambio'], 2) }}
-                            <span class="text-muted">
-                                ({{ number_format($resultado['cambio_porcentual'], 2) }}%)
-                            </span>
-                        </div> --}}
-
-                        <small class="text-muted d-block mt-2">
-                            Diferencia entre el valor inicial y el actual en el periodo analizado.
-                        </small>
-
-                    </div>
-                </div>
-
-                {{-- ESTADO --}}
-                <div class="col-12 bg-white p-3">
-                    <div class="p-2 border rounded h-100">
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>Estado actual</strong>
-                            <button class="btn btn-sm btn-light p-1" data-bs-toggle="modal" data-bs-target="#modalEstado">
-                                <i class="fa fa-circle-info"></i>
-                            </button>
-                        </div>
-
-                        {{-- <div class="mt-2">
-                            <span class="badge {{ $resultado['cumplimiento'] == 'en meta' ? 'bg-success' : 'bg-danger' }}">
-                                {{ $resultado['cumplimiento'] }}
-                            </span>
-                        </div> --}}
-
-                        <small class="text-muted d-block mt-2">
-                            Evalúa si el valor más reciente cumple con la meta establecida.
-                        </small>
-
-                    </div>
-                </div>
-
-                {{-- HISTORICO --}}
-                <div class="col-12 bg-white p-3">
-                    <div class="p-2 border rounded h-100">
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>Histórico</strong>
-                            <button class="btn btn-sm btn-light p-1" data-bs-toggle="modal" data-bs-target="#modalHistorico">
-                                <i class="fa fa-circle-info"></i>
-                            </button>
-                        </div>
-
-                        {{-- <div class="mt-2">
-                            <span class="badge bg-secondary">{{ $resultado['estado_historico'] }}</span>
-                            <span class="text-muted ms-1">
-                                ({{ number_format($resultado['porcentaje_cumplimiento'], 0) }}%)
-                            </span>
-                        </div> --}}
-
-                        <small class="text-muted d-block mt-2">
-                            Muestra qué tan frecuentemente el indicador ha cumplido la meta en el tiempo.
-                        </small>
-
-                    </div>
-                </div>
-
-                {{-- ESTABILIDAD --}}
-                {{-- <div class="col-6 col-sm-4 col-md-3 col-lg-2 bg-white p-3">
-                    <div class="p-2 border rounded h-100">
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>Estabilidad</strong>
-                            <button class="btn btn-sm btn-light p-1" data-bs-toggle="modal" data-bs-target="#modalEstabilidad">
-                                <i class="fa fa-circle-info"></i>
-                            </button>
-                        </div>
-
-                        <div class="mt-2">
-                            <span class="badge bg-warning text-dark">{{ $resultado['estabilidad'] }}</span>
-                        </div>
-
-                        <small class="text-muted d-block mt-2">
-                            Indica qué tanto varía el indicador; valores altos implican mayor fluctuación.
-                        </small>
-
-                    </div>
-                </div> --}}
-
-
-                {{-- PROYECCION --}}
-                <div class="col-12 bg-white p-3">
-                    <div class="p-2 border rounded h-100">
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>Proyección siguiente</strong>
-                            <button class="btn btn-sm btn-light p-1" data-bs-toggle="modal" data-bs-target="#modalProyeccion">
-                                <i class="fa fa-circle-info"></i>
-                            </button>
-                        </div>
-{{-- 
-                        <div class="mt-2 fw-bold">
-                            @if($indicador->unidad_medida === 'pesos')
-                                ${{ number_format($resultado['proyeccion_siguiente'], 2) }}
-
-                            @elseif($indicador->unidad_medida === 'porcentaje')
-                                {{ number_format($resultado['proyeccion_siguiente'], 2) }}%
-
-                            @elseif($indicador->unidad_medida === 'dias')
-                                {{ number_format($resultado['proyeccion_siguiente'], 2) }} Días
-
-                            @elseif($indicador->unidad_medida === 'toneladas')
-                                {{ number_format($resultado['proyeccion_siguiente'], 2) }} Ton.
-
-                            @else
-                                {{ number_format($resultado['proyeccion_siguiente'], 2) }}
-                            @endif
-
-                        </div> --}}
-
-                        <small class="text-muted d-block mt-2">
-                            Estimación del próximo valor basada en la tendencia actual del indicador.
-                        </small>
-
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
 
 
     </div>
@@ -1403,14 +1239,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return (height < 40) ? 'top' : 'center';
         },
 
-        rotation: function(context) {
-            const meta = context.chart.getDatasetMeta(context.datasetIndex);
-            const bar = meta.data[context.dataIndex];
-            const height = bar ? bar.height : 0;
-
-            // Solo rotamos si la barra es lo suficientemente alta para que quepa el texto
-            return (height < 40) ? 0 : -90;
-        },
+        rotation: -90,
 
         clamp: true,
         clip: false, // Importante: false para que el texto no desaparezca si sale de la barra

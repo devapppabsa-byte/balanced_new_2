@@ -68,7 +68,7 @@
 
 
         <div class="col-12 col-sm-12 col-md-4 col-lg-3 my-1">
-            <a href="{{asset('img/plantilla.xlsx')}}" class="btn btn-sm btn-outline-success w-100" download="PlantillaExcel.xlsx" >
+            <a href="{{ route('descargar.ultimo.excel') }}" class="btn btn-sm btn-outline-success w-100" >
                 <i class="fa fa-download mx-1"></i>
                 Descargar Plantilla
             </a>

@@ -526,6 +526,7 @@ public function editar_campo(Request $request, $campo, $tipo_campo){
 
 public function show_indicador_robusto_user(Request $request, Indicador $indicador){
 
+
     //este es para mostrar los datos en el select
    $campos_graficar = IndicadorLleno::where('id_indicador', $indicador->id)->distinct()->pluck('nombre_campo');
   
